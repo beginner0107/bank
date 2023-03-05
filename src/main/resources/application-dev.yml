@@ -1,8 +1,9 @@
 server:
   port: 8081
   servlet:
-    encoding: utf-8
-    force: true
+    encoding:
+      charset: utf-8
+      force: true
 
 spring:
   datasource:
@@ -28,3 +29,4 @@ spring:
 logging:
   level:
     '[shop.coding.bank]': DEBUG
+    '[org.hibernate.type]': TRACE
