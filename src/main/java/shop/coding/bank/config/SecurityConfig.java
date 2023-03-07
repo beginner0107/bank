@@ -43,7 +43,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests()
                 .antMatchers("/api/s/**").authenticated()
-                .antMatchers("api/admin/**").hasRole("" + UserEnum.ADMIN) // 최근 공식문서에서는 ROLE_ 안붙여도 됨
+                .antMatchers("/api/admin/**").hasRole("" + UserEnum.ADMIN) // 최근 공식문서에서는 ROLE_ 안붙여도 됨
                 .anyRequest().permitAll();
 
         return http.build();
