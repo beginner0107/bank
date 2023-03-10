@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import shop.coding.bank.dto.ResponseDto;
 import shop.coding.bank.handler.ex.CustomApiException;
+import shop.coding.bank.handler.ex.CustomValidationException;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -19,5 +20,11 @@ public class CustomExceptionHandler {
     public ResponseEntity<?> apiException(CustomApiException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomValidationException.class)
+    public ResponseEntity<?> validationApiException(CustomValidationException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), e.getErrorMap()), HttpStatus.BAD_REQUEST);
     }
 }
