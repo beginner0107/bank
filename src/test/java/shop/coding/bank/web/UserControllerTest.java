@@ -15,6 +15,8 @@ import shop.coding.bank.config.dummy.DummyObject;
 import shop.coding.bank.domain.user.UserRepository;
 import shop.coding.bank.dto.user.UserReqDto.JoinReqDto;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,10 +32,13 @@ class UserControllerTest extends DummyObject {
     private ObjectMapper om;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EntityManager em;
 
     @BeforeEach
     public void setUp() {
         dataSetting();
+        em.clear();
     }
 
 
@@ -63,9 +68,9 @@ class UserControllerTest extends DummyObject {
     public void join_fail_test() throws Exception {
         // Given
         JoinReqDto joinReqDto = new JoinReqDto();
-        joinReqDto.setUsername("ssar");
+        joinReqDto.setUsername("ssar1");
         joinReqDto.setPassword("1234");
-        joinReqDto.setEmail("ssar@nate.com");
+        joinReqDto.setEmail("ssar1@nate.com");
         joinReqDto.setFullname("쌀");
 
         String requestBody = om.writeValueAsString(joinReqDto);
@@ -82,6 +87,6 @@ class UserControllerTest extends DummyObject {
     }
 
     private void dataSetting() {
-        userRepository.save(newUser("ssar", "쌀"));
+        userRepository.save(newUser("ssar1", "쌀"));
     }
 }

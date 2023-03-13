@@ -38,21 +38,18 @@ class AccountControllerTest extends DummyObject {
 
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private ObjectMapper om;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
-
     @Autowired
     private EntityManager em;
 
     @BeforeEach
     public void setUp() {
-        User ssar = userRepository.save(newUser("ssar", "쌀"));
+        User ssar = userRepository.save(newUser("ssar1", "쌀"));
         User cos = userRepository.save(newUser("cos", "코스"));
         Account ssarAccount1 = accountRepository.save(newAccount(1111L, ssar));
         Account cosAccount1 = accountRepository.save(newAccount(2222L, cos));
@@ -62,7 +59,7 @@ class AccountControllerTest extends DummyObject {
     // jwt token -> 인증필터 -> 시큐리티 세션생성
     // setupBefore=TEST_METHOD (setUp 메서드 실행전에 수행)
     // setupBefore = TestExecutionEvent.TEST_EXECUTION (saveAccount_test 메서드 실행 전에 수행)
-    @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION) // 디비에서 username = ssar 조회를 해서 세션에 담아주는 어노테이션
+    @WithUserDetails(value = "ssar1", setupBefore = TestExecutionEvent.TEST_EXECUTION) // 디비에서 username = ssar 조회를 해서 세션에 담아주는 어노테이션
     @Test
     public void saveAccount_test() throws Exception {
         // Given
@@ -82,7 +79,7 @@ class AccountControllerTest extends DummyObject {
         resultActions.andExpect(status().isCreated());
     }
 
-    @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION) // 디비에서 username = ssar 조회를 해서 세션에 담아주는 어노테이션
+    @WithUserDetails(value = "ssar1", setupBefore = TestExecutionEvent.TEST_EXECUTION) // 디비에서 username = ssar 조회를 해서 세션에 담아주는 어노테이션
     @Test
     public void findUserAccount_test() throws Exception {
         // Given
@@ -104,7 +101,7 @@ class AccountControllerTest extends DummyObject {
      * Lazy 로딩은 쿼리도 발생안함 - PC에 있다면
      * Lazy 로딩할 때 PC 없다면 쿼리가 발생함.
      */
-    @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "ssar1", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void deleteAccount_test() throws Exception {
         // Given

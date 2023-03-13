@@ -16,6 +16,8 @@ import shop.coding.bank.config.dummy.DummyObject;
 import shop.coding.bank.domain.user.UserRepository;
 import shop.coding.bank.dto.user.UserReqDto.LoginReqDto;
 
+import javax.persistence.EntityManager;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,21 +32,23 @@ class JwtAuthenticationFilterTest extends DummyObject {
 
     @Autowired
     private ObjectMapper om;
+
     @Autowired
     private MockMvc mvc;
+
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() throws Exception {
-        userRepository.save(newUser("ssar", "쌀"));
+        userRepository.save(newUser("ssar1", "쌀"));
     }
 
     @Test
     public void successfulAuthentication_test() throws Exception {
         // Given
         LoginReqDto loginReqDto = new LoginReqDto();
-        loginReqDto.setUsername("ssar");
+        loginReqDto.setUsername("ssar1");
         loginReqDto.setPassword("1234");
         String requestBody = om.writeValueAsString(loginReqDto);
         System.out.println("테스트 : " + requestBody);
@@ -61,14 +65,14 @@ class JwtAuthenticationFilterTest extends DummyObject {
         resultActions.andExpect(status().isOk());
         assertNotNull(jwtToken);
         assertTrue(jwtToken.startsWith(JwtVO.TOKEN_PREFIX));
-        resultActions.andExpect(jsonPath("$.data.username").value("ssar"));
+        resultActions.andExpect(jsonPath("$.data.username").value("ssar1"));
     }
 
     @Test
     public void unsuccessfulAuthentication_test() throws Exception {
         // Given
         LoginReqDto loginReqDto = new LoginReqDto();
-        loginReqDto.setUsername("ssar");
+        loginReqDto.setUsername("ssar1");
         loginReqDto.setPassword("12345");
         String requestBody = om.writeValueAsString(loginReqDto);
         System.out.println("테스트 : " + requestBody);
