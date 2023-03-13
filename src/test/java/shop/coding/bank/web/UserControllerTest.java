@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
+@ActiveProfiles("test")
+@Sql("classpath:db/teardown.sql")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 class UserControllerTest extends DummyObject {
@@ -68,7 +71,7 @@ class UserControllerTest extends DummyObject {
     public void join_fail_test() throws Exception {
         // Given
         JoinReqDto joinReqDto = new JoinReqDto();
-        joinReqDto.setUsername("ssar1");
+        joinReqDto.setUsername("ssar");
         joinReqDto.setPassword("1234");
         joinReqDto.setEmail("ssar1@nate.com");
         joinReqDto.setFullname("쌀");
@@ -87,6 +90,6 @@ class UserControllerTest extends DummyObject {
     }
 
     private void dataSetting() {
-        userRepository.save(newUser("ssar1", "쌀"));
+        userRepository.save(newUser("ssar", "쌀"));
     }
 }
