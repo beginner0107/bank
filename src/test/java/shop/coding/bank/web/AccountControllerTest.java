@@ -13,12 +13,15 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import shop.coding.bank.config.auth.LoginUser;
 import shop.coding.bank.config.dummy.DummyObject;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
 import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,5 +66,20 @@ class AccountControllerTest extends DummyObject {
 
         // Then
         resultActions.andExpect(status().isCreated());
+    }
+
+    @WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION) // 디비에서 username = ssar 조회를 해서 세션에 담아주는 어노테이션
+    @Test
+    public void findUserAccount_test() throws Exception {
+        // Given
+
+        // When
+        ResultActions resultActions = mvc
+                .perform(get("/api/s/account/login-user"));
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("테스트 : " + responseBody);
+
+        // Then
+        resultActions.andExpect(status().isOk());
     }
 }
