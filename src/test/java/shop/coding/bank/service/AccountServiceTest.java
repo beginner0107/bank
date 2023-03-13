@@ -12,9 +12,12 @@ import shop.coding.bank.domain.account.Account;
 import shop.coding.bank.domain.account.AccountRepository;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
+import shop.coding.bank.service.AccountService.AccountListRespDto;
 import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
 import shop.coding.bank.dto.account.AccountRespDto.AccountSaveRespDto;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -63,5 +66,28 @@ class AccountServiceTest extends DummyObject {
 
         // Then
         assertThat(accountSaveRespDto.getNumber()).isEqualTo(1111L);
+    }
+
+    @Test
+    void 계좌목록보기_유저별_test() throws Exception {
+        // Given
+        Long userId = 1L;
+
+        // stub - 1
+        User ssar = newMockUser(1L, "ssar", "쌀");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(ssar));
+
+        // stub - 2
+        Account ssarAccount1 = newMockAccount(1L, 1111L, 1000L, ssar);
+        Account ssarAccount2 = newMockAccount(2L, 2222L, 1000L, ssar);
+        List<Account> accountList = Arrays.asList(ssarAccount1, ssarAccount2);
+        when(accountRepository.findByUser_id(any())).thenReturn(accountList);
+
+        // When
+        AccountListRespDto accountListRespDto = accountService.계좌목록보기_유저별(userId);
+
+        // Then
+        assertThat(accountListRespDto.getFullname()).isEqualTo("쌀");
+        assertThat(accountListRespDto.getAccounts()).hasSize(2);
     }
 }
