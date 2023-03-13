@@ -12,15 +12,17 @@ import shop.coding.bank.domain.account.Account;
 import shop.coding.bank.domain.account.AccountRepository;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
-import shop.coding.bank.service.AccountService.AccountListRespDto;
+import shop.coding.bank.dto.account.AccountRespDto.AccountListRespDto;
 import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
 import shop.coding.bank.dto.account.AccountRespDto.AccountSaveRespDto;
+import shop.coding.bank.handler.ex.CustomApiException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -89,5 +91,20 @@ class AccountServiceTest extends DummyObject {
         // Then
         assertThat(accountListRespDto.getFullname()).isEqualTo("쌀");
         assertThat(accountListRespDto.getAccounts()).hasSize(2);
+    }
+
+    @Test
+    void 계좌삭제_test() throws Exception {
+        // Given
+        Long number = 1111L;
+        Long userId = 2L;
+
+        // stub
+        User ssar = newMockUser(1L, "ssar", "쌀");
+        Account ssarAccount = newMockAccount(1L, 1111L, 1000L, ssar);
+        when(accountRepository.findByNumber(any())).thenReturn(Optional.of(ssarAccount));
+
+        // When
+        assertThrows(CustomApiException.class, () -> accountService.계좌삭제(number, userId));
     }
 }
