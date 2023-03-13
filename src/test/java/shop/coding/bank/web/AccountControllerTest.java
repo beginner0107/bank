@@ -17,11 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.coding.bank.config.dummy.DummyObject;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
-import shop.coding.bank.dto.account.AccountReqDto.*;
-import shop.coding.bank.dto.account.AccountRespDto.*;
+import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
 
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
