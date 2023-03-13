@@ -1,18 +1,16 @@
 package shop.coding.bank.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.coding.bank.domain.account.Account;
 import shop.coding.bank.domain.account.AccountRepository;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
+import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
+import shop.coding.bank.dto.account.AccountRespDto.AccountSaveRespDto;
 import shop.coding.bank.handler.ex.CustomApiException;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -41,39 +39,5 @@ public class AccountService {
 
         // DTO를 응답
         return new AccountSaveRespDto(accountPS);
-    }
-
-    @Getter
-    @Setter
-    public static class AccountSaveRespDto {
-        private Long id;
-        private Long number;
-        private Long balance;
-
-        public AccountSaveRespDto(Account account) {
-            this.id = account.getId();
-            this.number = account.getNumber();
-            this.balance = account.getBalance();
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class AccountSaveReqDto {
-        @NotNull
-        @Digits(integer = 4, fraction = 4)
-        private Long number;
-        @NotNull
-        @Digits(integer = 4, fraction = 4)
-        private Long password;
-
-        public Account toEntity(User user) {
-            return Account.builder()
-                    .number(number)
-                    .password(password)
-                    .balance(1000L)
-                    .user(user)
-                    .build();
-        }
     }
 }
