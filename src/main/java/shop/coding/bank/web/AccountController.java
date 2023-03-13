@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import shop.coding.bank.config.auth.LoginUser;
 import shop.coding.bank.dto.ResponseDto;
 import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
+import shop.coding.bank.dto.account.AccountRespDto.AccountListRespDto;
 import shop.coding.bank.dto.account.AccountRespDto.AccountSaveRespDto;
 import shop.coding.bank.service.AccountService;
-import shop.coding.bank.service.AccountService.AccountListRespDto;
 
 import javax.validation.Valid;
 
@@ -40,5 +40,11 @@ public class AccountController {
 
         AccountListRespDto accountListRespDto = accountService.계좌목록보기_유저별(loginUser.getUser().getId());
         return new ResponseEntity<>(new ResponseDto<>(1, "계좌목록보기_유저별 성공", accountListRespDto), HttpStatus.OK);
-    } 
+    }
+
+    @DeleteMapping("/s/account/{number}")
+    public ResponseEntity<?> deleteAccount(@PathVariable Long number, @AuthenticationPrincipal LoginUser loginUser) {
+        accountService.계좌삭제(number, loginUser.getUser().getId());
+        return new ResponseEntity<>(new ResponseDto<>(1, "계좌 삭제 완료", null), HttpStatus.OK);
+    }
 }
