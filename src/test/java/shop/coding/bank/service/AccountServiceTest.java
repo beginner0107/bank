@@ -10,18 +10,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import shop.coding.bank.config.dummy.DummyObject;
 import shop.coding.bank.domain.account.Account;
 import shop.coding.bank.domain.account.AccountRepository;
+import shop.coding.bank.domain.transaction.Transaction;
+import shop.coding.bank.domain.transaction.TransactionRepository;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserRepository;
-import shop.coding.bank.dto.account.AccountRespDto.AccountListRespDto;
-import shop.coding.bank.dto.account.AccountReqDto.AccountSaveReqDto;
-import shop.coding.bank.dto.account.AccountRespDto.AccountSaveRespDto;
+import shop.coding.bank.dto.account.AccountReqDto.*;
+import shop.coding.bank.dto.account.AccountRespDto.*;
 import shop.coding.bank.handler.ex.CustomApiException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -37,6 +38,9 @@ class AccountServiceTest extends DummyObject {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private TransactionRepository transactionRepository;
 
     @Spy // 진짜 객체를 InjectMocks 에 주입한다.
     private ObjectMapper om;
@@ -106,5 +110,36 @@ class AccountServiceTest extends DummyObject {
 
         // When
         assertThrows(CustomApiException.class, () -> accountService.계좌삭제(number, userId));
+    }
+
+    // Account -> balance 변경됐는지
+    // Transaction -> balance 잘 기록됐는지
+    @Test
+    void 계좌입금_test() throws Exception {
+        // Given
+        AccountDepositReqDto accountDepositReqDto = new AccountDepositReqDto();
+        accountDepositReqDto.setNumber(1111L);
+        accountDepositReqDto.setAmount(100L);
+        accountDepositReqDto.setGubun("DEPOSIT");
+        accountDepositReqDto.setTel("01022339999");
+
+        // stub 1
+        User ssar = newMockUser(1L, "ssar", "쌀");
+        Account ssarAccount1 = newMockAccount(1L, 1111L, 1000L, ssar);
+        when(accountRepository.findByNumber(any())).thenReturn(Optional.of(ssarAccount1));
+
+        // stub 2
+        Account ssarAccount2 = newMockAccount(1L, 1111L, 1000L, ssar);
+        Transaction transaction = newMockDepositTransaction(1L, ssarAccount2);
+        when(transactionRepository.save(any())).thenReturn(transaction);
+
+        // When
+        AccountDepositRespDto accountDepositRespDto = accountService.계좌입금(accountDepositReqDto);
+        System.out.println("테스트 : 트랜잭션 입금계좌 잔액 : " + accountDepositRespDto.getTransaction().getDepositAccountBalance());
+        System.out.println("테스트 : 계좌쪽 잔액 : " + ssarAccount1.getBalance());
+
+        // Then
+        assertThat(ssarAccount1.getBalance()).isEqualTo(1100L);
+        assertThat(accountDepositRespDto.getTransaction().getDepositAccountBalance()).isEqualTo(1100L);
     }
 }

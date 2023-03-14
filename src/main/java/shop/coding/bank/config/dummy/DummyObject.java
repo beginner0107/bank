@@ -2,6 +2,8 @@ package shop.coding.bank.config.dummy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import shop.coding.bank.domain.account.Account;
+import shop.coding.bank.domain.transaction.Transaction;
+import shop.coding.bank.domain.transaction.TransactionEnum;
 import shop.coding.bank.domain.user.User;
 import shop.coding.bank.domain.user.UserEnum;
 
@@ -54,5 +56,24 @@ public class DummyObject {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+    }
+
+    protected Transaction newMockDepositTransaction(Long id, Account account){
+        account.deposit(100L);
+        Transaction transaction = Transaction.builder()
+                .id(id)
+                .withdrawAccount(null) // 출금 X -> null
+                .depositAccount(account) // 입금계좌ID
+                .depositAccountBalance(account.getBalance()) // 입금한 후 금액
+                .withdrawAccountBalance(null) // 출금 X -> null
+                .amount(100L) // 입금할 금액
+                .gubun(TransactionEnum.DEPOSIT) // 입금 -> DEPOSIT
+                .sender("ATM")
+                .receiver(account.getNumber() + "") // 입금받는 사람의 계좌번호
+                .tel("01023234433") // 입금하는 사람의 전화번호
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        return transaction;
     }
 }
