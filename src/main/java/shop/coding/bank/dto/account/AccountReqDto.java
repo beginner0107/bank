@@ -6,7 +6,9 @@ import shop.coding.bank.domain.account.Account;
 import shop.coding.bank.domain.user.User;
 
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class AccountReqDto {
 
@@ -28,5 +30,21 @@ public class AccountReqDto {
                     .user(user)
                     .build();
         }
+    }
+
+    @Getter
+    @Setter
+    public static class AccountDepositReqDto {
+        @NotNull
+        @Digits(integer = 4, fraction = 4)
+        private Long number;
+        @NotNull
+        private Long amount;
+        @NotEmpty
+        @Pattern(regexp = "DEPOSIT")
+        private String gubun;
+        @NotEmpty
+        @Pattern(regexp = "^[0-9]{11}")
+        private String tel;
     }
 }
