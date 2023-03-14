@@ -142,4 +142,65 @@ class AccountServiceTest extends DummyObject {
         assertThat(ssarAccount1.getBalance()).isEqualTo(1100L);
         assertThat(accountDepositRespDto.getTransaction().getDepositAccountBalance()).isEqualTo(1100L);
     }
+
+    @Test
+    void 계좌입금_test2() throws Exception {
+        // Given
+        AccountDepositReqDto accountDepositReqDto = new AccountDepositReqDto();
+        accountDepositReqDto.setNumber(1111L);
+        accountDepositReqDto.setAmount(100L);
+        accountDepositReqDto.setGubun("DEPOSIT");
+        accountDepositReqDto.setTel("01022339999");
+
+        // stub 1
+        User ssar = newMockUser(1L, "ssar", "쌀");
+        Account ssarAccount1 = newMockAccount(1L, 1111L, 1000L, ssar);
+        when(accountRepository.findByNumber(any())).thenReturn(Optional.of(ssarAccount1));
+
+        // stub 2
+        User ssar2 = newMockUser(1L, "ssar", "쌀");
+        Account ssarAccount2 = newMockAccount(1L, 1111L, 1000L, ssar2);
+        Transaction transaction = newMockDepositTransaction(1L, ssarAccount2);
+        when(transactionRepository.save(any())).thenReturn(transaction);
+
+        // When
+        AccountDepositRespDto accountDepositRespDto = accountService.계좌입금(accountDepositReqDto);
+        String responseBody = om.writeValueAsString(accountDepositRespDto);
+        System.out.println("테스트 : " + responseBody);
+
+        // Then
+        assertThat(ssarAccount1.getBalance()).isEqualTo(1100L);
+    }
+
+    /*
+     * 무엇을 여기서 테스트해야할지 명확히 구분 (책임 분리)
+     * DTO를 만드는 책임 -> 서비스에 있지만 (서비스에서 검증 X -> Controller에서 테스트 가능)
+     * DB관련된 것 -> 서비스 책임이 아니라고 봄
+     * DB관련된 것을 조회했을 때, 그 값을 통해서 어떤 비즈니스 로직이 흘러가는 것이 있으면 -> stub으로 정의해서 테스트 해보면 됨
+     *
+     * DB스텁 (가짜로 DB만들어서 deposit 검증..0원 검증)
+     */
+    @Test
+    public void 계좌입금_test3() throws Exception {
+        // Given
+        Account account = newMockAccount(1L, 1111L, 1000L, null);
+        Long amount = 100L;
+
+        // When
+        if (amount <= 0L) {
+            throw new CustomApiException("0원 이하의 금액을 임급할 수 없습니다");
+        }
+        account.deposit(100L);
+
+        // Then
+        assertThat(account.getBalance()).isEqualTo(1100L);
+    }
+
+    // 계좌 출금_테스트
+    
+    // 계좌 이체_테스트
+    
+    // 계좌목록_유저별_테스트
+    
+    // 계좌상세보기_테스트
 }
